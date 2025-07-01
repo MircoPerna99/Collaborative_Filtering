@@ -1,0 +1,61 @@
+{
+    "_id": "collaborative_filtering",
+    "PPI": [
+        { "ID_Protein_A": "PT0001", "ID_Protein_B": "PT0002" },
+        { "ID_Protein_A": "PT0003", "ID_Protein_B": "PT0004" },
+        { "ID_Protein_A": "PT0005", "ID_Protein_B": "PT0006" },
+        { "ID_Protein_A": "PT0007", "ID_Protein_B": "PT0008" },
+        { "ID_Protein_A": "PT0009", "ID_Protein_B": "PT0010" },
+        { "ID_Protein_A": "PT0011", "ID_Protein_B": "PT0012" },
+        { "ID_Protein_A": "PT0013", "ID_Protein_B": "PT0014" },
+        { "ID_Protein_A": "PT0015", "ID_Protein_B": "PT0016" },
+        { "ID_Protein_A": "PT0011", "ID_Protein_B": "PT0018" },
+        { "ID_Protein_A": "PT0019", "ID_Protein_B": "PT0020" },
+        { "ID_Protein_A": "PT0001", "ID_Protein_B": "PT0007" },
+        { "ID_Protein_A": "PT0002", "ID_Protein_B": "PT0008" },
+        { "ID_Protein_A": "PT0003", "ID_Protein_B": "PT0009" },
+        { "ID_Protein_A": "PT0004", "ID_Protein_B": "PT0020" },
+        { "ID_Protein_A": "PT0005", "ID_Protein_B": "PT0011" },
+        { "ID_Protein_A": "PT0006", "ID_Protein_B": "PT0012" },
+        { "ID_Protein_A": "PT0007", "ID_Protein_B": "PT0013" },
+        { "ID_Protein_A": "PT0008", "ID_Protein_B": "PT0014" },
+        { "ID_Protein_A": "PT0009", "ID_Protein_B": "PT0015" },
+        { "ID_Protein_A": "PT0010", "ID_Protein_B": "PT0016" },
+        { "ID_Protein_A": "PT0011", "ID_Protein_B": "PT0017" },
+        { "ID_Protein_A": "PT0012", "ID_Protein_B": "PT0018" },
+        { "ID_Protein_A": "PT0013", "ID_Protein_B": "PT0019" },
+        { "ID_Protein_A": "PT0014", "ID_Protein_B": "PT0020" },
+        { "ID_Protein_A": "PT0001", "ID_Protein_B": "PT0015" }
+    ],
+    "Drug_Target": [
+        { "ID_DrugBank": "DB0001", "ID_Target": "PT0001" },
+        { "ID_DrugBank": "DB0001", "ID_Target": "PT0002" },
+        { "ID_DrugBank": "DB0001", "ID_Target": "PT0003" },
+        { "ID_DrugBank": "DB0001", "ID_Target": "PT0004" },
+        { "ID_DrugBank": "DB0001", "ID_Target": "PT0005" },
+
+        { "ID_DrugBank": "DB0002", "ID_Target": "PT0006" },
+        { "ID_DrugBank": "DB0002", "ID_Target": "PT0007" },
+        { "ID_DrugBank": "DB0002", "ID_Target": "PT0008" },
+        { "ID_DrugBank": "DB0002", "ID_Target": "PT0009" },
+        { "ID_DrugBank": "DB0002", "ID_Target": "PT0010" },
+
+        { "ID_DrugBank": "DB0003", "ID_Target": "PT0011" },
+        { "ID_DrugBank": "DB0003", "ID_Target": "PT0012" },
+        { "ID_DrugBank": "DB0003", "ID_Target": "PT0013" },
+        { "ID_DrugBank": "DB0003", "ID_Target": "PT0014" },
+        { "ID_DrugBank": "DB0003", "ID_Target": "PT0015" },
+
+        { "ID_DrugBank": "DB0004", "ID_Target": "PT0016" },
+        { "ID_DrugBank": "DB0004", "ID_Target": "PT0017" },
+        { "ID_DrugBank": "DB0004", "ID_Target": "PT0018" },
+        { "ID_DrugBank": "DB0004", "ID_Target": "PT0019" },
+        { "ID_DrugBank": "DB0004", "ID_Target": "PT0020" },
+
+        { "ID_DrugBank": "DB0005", "ID_Target": "PT0001" },
+        { "ID_DrugBank": "DB0005", "ID_Target": "PT0006" },
+        { "ID_DrugBank": "DB0005", "ID_Target": "PT0011" },
+        { "ID_DrugBank": "DB0005", "ID_Target": "PT0016" },
+        { "ID_DrugBank": "DB0005", "ID_Target": "PT0020" }
+    ]
+}

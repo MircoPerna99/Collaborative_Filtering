@@ -32,3 +32,5 @@ class DataAccess():
         
         return drug_target_interactions
     
+    def close_connection(self):
+        self.client.close()
