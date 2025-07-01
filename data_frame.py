@@ -60,7 +60,8 @@ class DataFrame():
             
         def calculate_interaction():
             columns_to_group_by = ["ID_Drug", "ID_Protein_B"]
-            self.joined_df = self.joined_df.groupBy(columns_to_group_by).count().alias("Interactions")
+            self.joined_df = self.joined_df.groupBy(columns_to_group_by).count()
+            self.joined_df = self.joined_df.withColumnRenamed("count", "Interactions")
             self.joined_df.show()
             
         def indexing_id():
