@@ -1,9 +1,20 @@
 from pyspark.ml.recommendation import ALS
 from pyspark.ml.evaluation import RegressionEvaluator
+from pyspark.sql.functions import explode
+from pyspark.ml.feature import StringIndexer
+from pyspark.ml.feature import IndexToString
+from pyspark.ml import Pipeline
 
 class ALSModel():
     def __init__(self, data):
-        self.data = data
+        self.indexing_id(data)
+        
+    def indexing_id(self,data):
+        self.drug_indexer = StringIndexer(inputCol = "ID_Drug", outputCol = "ID_Drug_Index").fit(data)
+        self.prontein_indexer = StringIndexer(inputCol = "ID_Protein", outputCol = "ID_Protein_Index").fit(data)
+        pipeline = Pipeline(stages = [self.drug_indexer, self.prontein_indexer])
+        self.data = pipeline.fit(data).transform(data)
+        self.data.show()
     
     def train(self):
         (training, test) = self.data.randomSplit([0.8, 0.2])
@@ -12,10 +23,10 @@ class ALSModel():
         ranks = [25]
         alphas = [10.0, 20.0, 40.0, 60.0, 80.0]
         
-        aus_regParam = 0.0
-        aus_rank = 0
-        aus_alpha = 0.0
-        aus_rmse = 0.0
+        self.aus_regParam = 0.0
+        self.aus_rank = 0
+        self.aus_alpha = 0.0
+        self.aus_rmse = 0.0
         
         for regParam in regParams:
             for rank in ranks:
@@ -28,14 +39,30 @@ class ALSModel():
                     evaluator = RegressionEvaluator(metricName = "rmse", labelCol = "Interactions", predictionCol = "prediction")
                     rmse = evaluator.evaluate(predictions)
                     
-                    if(aus_rmse == 0.0 or rmse < aus_rmse):
-                        aus_regParam = regParam
-                        aus_rank = rank
-                        aus_alpha = alpha
-                        aus_rmse = rmse
+                    if(self.aus_rmse == 0.0 or rmse < self.aus_rmse):
+                        self.aus_regParam = regParam
+                        self.aus_rank = rank
+                        self.aus_alpha = alpha
+                        self.aus_rmse = rmse
+                        self.model = aus_model
 
                     print("For regParam: {0}, rank:{1}, alpha:{2}, RMSE:{3}".format(regParam, rank, alpha, rmse))
                      
-        print("Chosen parameters: regParam: {0}, rank:{1}, alpha:{2}, RMSE:{3}".format(aus_regParam, aus_rank, aus_alpha, aus_rmse))        
+        print("Chosen parameters: regParam: {0}, rank:{1}, alpha:{2}, RMSE:{3}".format(self.aus_regParam, self.aus_rank, self.aus_alpha, self.aus_rmse))        
                     
-                
+
+    def calculate_recommended_proteins(self):
+            amount_proteins_for_drug = 3
+            proteins_recommended = self.model.recommendForAllUsers(amount_proteins_for_drug)
+            drug_proteins_recommended = proteins_recommended.withColumn("proteinAndRating", explode(proteins_recommended.recommendations))\
+                                                            .select("ID_Drug_Index", "proteinAndRating.*")
+            drug_proteins_recommended.show() 
+            self.data.show()
+            drug_name = IndexToString(inputCol = "ID_Drug_Index", outputCol = "ID_Drug", labels = self.drug_indexer.labels)
+            prontein_name= IndexToString(inputCol = "ID_Protein_Index", outputCol = "ID_Protein", labels = self.prontein_indexer.labels)
+            pipeline = Pipeline(stages = [drug_name, prontein_name])
+            drug_proteins_recommended_names = pipeline.fit(self.data).transform(drug_proteins_recommended)
+            drug_proteins_recommended_names =   drug_proteins_recommended_names.select("ID_Drug","ID_Protein","rating")\
+                                                                               .orderBy("ID_Drug","rating")
+            drug_proteins_recommended_names.show()
+            

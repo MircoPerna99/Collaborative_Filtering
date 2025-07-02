@@ -11,5 +11,6 @@ _data_access.close_connection()
 dataFrame = DataFrame(ppis, drug_target_interactions)
 dataFrame.create_date_frame_for_als()
 
-model = ALSModel(dataFrame.indexed_df)
+model = ALSModel(dataFrame.joined_df)
 model.train()
+model.calculate_recommended_proteins()
