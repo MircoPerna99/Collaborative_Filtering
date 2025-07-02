@@ -1,15 +1,16 @@
 from pyspark.ml.recommendation import ALS
 from pyspark.ml.evaluation import RegressionEvaluator
 from pyspark.sql.functions import explode
+from pyspark.sql.functions import first
 from pyspark.ml.feature import StringIndexer
 from pyspark.ml.feature import IndexToString
 from pyspark.ml import Pipeline
 
 class ALSModel():
     def __init__(self, data):
-        self.indexing_id(data)
+        self.indexing_name(data)
         
-    def indexing_id(self,data):
+    def indexing_name(self,data):
         self.drug_indexer = StringIndexer(inputCol = "ID_Drug", outputCol = "ID_Drug_Index").fit(data)
         self.prontein_indexer = StringIndexer(inputCol = "ID_Protein", outputCol = "ID_Protein_Index").fit(data)
         pipeline = Pipeline(stages = [self.drug_indexer, self.prontein_indexer])
@@ -48,21 +49,23 @@ class ALSModel():
 
                     print("For regParam: {0}, rank:{1}, alpha:{2}, RMSE:{3}".format(regParam, rank, alpha, rmse))
                      
-        print("Chosen parameters: regParam: {0}, rank:{1}, alpha:{2}, RMSE:{3}".format(self.aus_regParam, self.aus_rank, self.aus_alpha, self.aus_rmse))        
-                    
+        print("Chosen parameters: regParam: {0}, rank:{1}, alpha:{2}, RMSE:{3}".format(self.aus_regParam, self.aus_rank, self.aus_alpha, self.aus_rmse))          
 
-    def calculate_recommended_proteins(self):
-            amount_proteins_for_drug = 3
-            proteins_recommended = self.model.recommendForAllUsers(amount_proteins_for_drug)
-            drug_proteins_recommended = proteins_recommended.withColumn("proteinAndRating", explode(proteins_recommended.recommendations))\
-                                                            .select("ID_Drug_Index", "proteinAndRating.*")
-            drug_proteins_recommended.show() 
-            self.data.show()
+    def from_index_to_name(self, proteins_recommended):
             drug_name = IndexToString(inputCol = "ID_Drug_Index", outputCol = "ID_Drug", labels = self.drug_indexer.labels)
             prontein_name= IndexToString(inputCol = "ID_Protein_Index", outputCol = "ID_Protein", labels = self.prontein_indexer.labels)
             pipeline = Pipeline(stages = [drug_name, prontein_name])
-            drug_proteins_recommended_names = pipeline.fit(self.data).transform(drug_proteins_recommended)
-            drug_proteins_recommended_names =   drug_proteins_recommended_names.select("ID_Drug","ID_Protein","rating")\
+            self.drug_proteins_recommended = pipeline.fit(self.data).transform(proteins_recommended)
+            self.drug_proteins_recommended =   self.drug_proteins_recommended.select("ID_Drug","ID_Protein","rating")\
                                                                                .orderBy("ID_Drug","rating")
-            drug_proteins_recommended_names.show()
+    def calculate_recommended_proteins(self):
+            amount_proteins_for_drug = 3
+            proteins_recommended = self.model.recommendForAllUsers(amount_proteins_for_drug)
+            proteins_recommended = proteins_recommended.withColumn("proteinAndRating", explode(proteins_recommended.recommendations))\
+                                                            .select("ID_Drug_Index", "proteinAndRating.*")
+            proteins_recommended.show() 
+            self.data.show()
+            self.from_index_to_name(proteins_recommended)
+            # self.data.groupBy("ID_Drug").pivot("ID_Protein").agg(first("Interactions")).show()
+            self.drug_proteins_recommended.show()
             
