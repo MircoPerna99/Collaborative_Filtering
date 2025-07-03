@@ -18,11 +18,11 @@ class ALSModel():
         self.data.show()
     
     def train(self):
-        (training, test) = self.data.randomSplit([0.8, 0.2])
+        (training, test) = self.data.randomSplit([0.8, 0.2], seed=42)
         
         regParams = [0.01, 0.1]
-        ranks = [25]
-        alphas = [10.0, 20.0, 40.0, 60.0, 80.0]
+        ranks = [25,30,35]
+        alphas = [10.0, 20.0, 40.0, 60.0, 80.0, 100.0]
         
         self.aus_regParam = 0.0
         self.aus_rank = 0
@@ -58,14 +58,15 @@ class ALSModel():
             self.drug_proteins_recommended = pipeline.fit(self.data).transform(proteins_recommended)
             self.drug_proteins_recommended =   self.drug_proteins_recommended.select("ID_Drug","ID_Protein","rating")\
                                                                                .orderBy("ID_Drug","rating")
+                                                                               
     def calculate_recommended_proteins(self):
-            amount_proteins_for_drug = 3
+            self.train()
+            amount_proteins_for_drug = 7
             proteins_recommended = self.model.recommendForAllUsers(amount_proteins_for_drug)
             proteins_recommended = proteins_recommended.withColumn("proteinAndRating", explode(proteins_recommended.recommendations))\
                                                             .select("ID_Drug_Index", "proteinAndRating.*")
             proteins_recommended.show() 
             self.data.show()
             self.from_index_to_name(proteins_recommended)
-            # self.data.groupBy("ID_Drug").pivot("ID_Protein").agg(first("Interactions")).show()
             self.drug_proteins_recommended.show()
             

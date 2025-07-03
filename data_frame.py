@@ -65,13 +65,6 @@ class DataFrame():
             self.joined_df = self.joined_df.withColumnRenamed("ID_Protein_B", "ID_Protein")
             self.joined_df.show()
             
-        # def indexing_id():
-        #     drug_indexer = StringIndexer(inputCol = "ID_Drug", outputCol = "ID_Drug_Index").fit(self.joined_df)
-        #     prontein_indexer = StringIndexer(inputCol = "ID_Protein_B", outputCol = "ID_Protein_Index").fit(self.joined_df)
-        #     pipeline = Pipeline(stages = [drug_indexer, prontein_indexer])
-        #     self.indexed_df = pipeline.fit(self.joined_df).transform(self.joined_df)
-        #     self.indexed_df.show()
-            
         create_drug_interactions()
         
         join_drug_target_with_ppi()
@@ -80,6 +73,5 @@ class DataFrame():
         
         calculate_interaction()
         
-        # indexing_id()
 
         
